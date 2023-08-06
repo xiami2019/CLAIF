@@ -3,8 +3,6 @@ import logging
 import random
 import os
 import sys
-import gzip
-import csv
 import math
 from collections import defaultdict, OrderedDict
 from datetime import datetime
@@ -12,27 +10,20 @@ from typing import List, Dict
 
 import numpy as np
 import torch
-import torch.nn as nn
 from torch.utils.data import DataLoader
-from sentence_transformers import SentenceTransformer, losses, models, util, LoggingHandler
+from sentence_transformers import SentenceTransformer, losses, models, LoggingHandler
 from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator
 from sentence_transformers.readers import InputExample
 from sentence_transformers.cross_encoder import CrossEncoder
 from sentence_transformers.cross_encoder.evaluation import CECorrelationEvaluator
 
-from utils import DatasetEntry, DatasetEntryWithExplanation
+from utils import DatasetEntry, DatasetEntryWithExp
 
 PATH_TO_SENTEVAL = './SentEval'
 PATH_TO_DATA = './SentEval/data'
 # Import SentEval
 sys.path.insert(0, PATH_TO_SENTEVAL)
-from senteval.sts import  STSBenchmarkEval, SICKRelatednessEval
-
-def download_sts_dataset(sts_dataset_path: str) -> None:
-    """Download the STS dataset if it isn't already present."""
-    if not os.path.exists(sts_dataset_path):
-        util.http_get('https://sbert.net/datasets/stsbenchmark.tsv.gz', sts_dataset_path)
-
+from senteval.sts import STSBenchmarkEval, SICKRelatednessEval
 
 def set_seed(seed: int) -> None:
     """Set RNG seeds for python's `random` module, numpy and torch."""
@@ -123,14 +114,13 @@ if __name__ == '__main__':
                         help="The batch size used for training.")
     parser.add_argument("--num_epochs", type=int, default=1,
                         help="The number of epochs to train for.")
+    parser.add_argument("--evaluation_steps", type=int, default=125)
     parser.add_argument("--lr", type=float, default=2e-5)
     parser.add_argument("--seed", type=int, default=42,
                         help="The seed used to initialize all random number generators.")
-    parser.add_argument("--pooler_type", type=str, default='mean', choices=['cls', 'mean'])
+    parser.add_argument("--pooler_type", type=str, default='cls', choices=['cls', 'mean'])
     
     # Evaluation parameters
-    parser.add_argument("--sts_dataset_path", type=str, default="datasets/stsbenchmark.tsv.gz",
-                        help="The path to the STSb dataset. The STSb dataset is downloaded and saved at this path if it does not exist.")
     parser.add_argument("--using_stsb_dev", action="store_true")
     parser.add_argument("--using_sickr_dev", action="store_true")
     parser.add_argument("--encoder_type", type=str, default='bi', choices=['bi', 'cross'])
@@ -175,9 +165,6 @@ if __name__ == '__main__':
     with open(args_file, 'w', encoding='utf8') as fh:
         fh.write(str(vars(args)))
 
-    # If the STSb dataset does not exist, we download it.
-    download_sts_dataset(args.sts_dataset_path)
-
     if args.encoder_type == 'bi':
         model = build_sentence_transformer(args.model_name, args.pooler_type)
     elif args.encoder_type == 'cross':
@@ -188,7 +175,7 @@ if __name__ == '__main__':
 
     # Load and split the (postprocessed) STS-DINO dataset.
     if args.using_explanation:
-        dataset = DatasetEntryWithExplanation.read_list(args.input_file)
+        dataset = DatasetEntryWithExp.read_list(args.input_file)
     else:
         dataset = DatasetEntry.read_list(args.input_file)
     dev_samples = []
@@ -205,7 +192,7 @@ if __name__ == '__main__':
             dev_samples += [InputExample(texts=[' '.join(x[0]), ' '.join(x[1])], label=float(x[2])/5.0) for x in dev_data]
     elif args.using_stsb_dev_exp:
         dataset = split_dataset(dataset, dev_size=0.0, seed=args.seed)
-        dev_dataset = DatasetEntryWithExplanation.read_list('stsb_dev_with_explanation.jsonl')
+        dev_dataset = DatasetEntryWithExp.read_list('stsb_dev_with_explanation.jsonl')
         # dev_samples = [InputExample(texts=[x.text_a, x.text_b + model.tokenizer.sep_token*2 + 'They are completely different in terms of the meaning and the words used.'], label=float(x.label)) for x in dev_dataset]
         dev_samples = [InputExample(texts=[x.text_a, x.text_b + model.tokenizer.sep_token*2 + x.explanation], label=float(x.label)) for x in dev_dataset]
     else:
@@ -222,7 +209,6 @@ if __name__ == '__main__':
         train_samples = [InputExample(texts=[x.text_a, x.text_b + model.tokenizer.sep_token*2 + x.explanation], label=float(x.label)) for x in dataset['train']]
     else:
         train_samples = [InputExample(texts=[x.text_a, x.text_b], label=float(x.label)) for x in dataset['train']]
-    
 
     train_dataloader = DataLoader(train_samples, shuffle=True, batch_size=args.train_batch_size)
     train_loss = losses.CosineSimilarityLoss(model=model)
@@ -253,7 +239,7 @@ if __name__ == '__main__':
         model.fit(train_objectives=[(train_dataloader, train_loss)],
                 evaluator=evaluator,
                 epochs=args.num_epochs,
-                evaluation_steps=125,
+                evaluation_steps=args.evaluation_steps,
                 warmup_steps=warmup_steps,
                 optimizer_params=optimizer_params,
                 output_path=model_save_path)
@@ -261,7 +247,7 @@ if __name__ == '__main__':
         model.fit(train_dataloader=train_dataloader,
                 evaluator=evaluator,
                 epochs=args.num_epochs,
-                evaluation_steps=125,
+                evaluation_steps=args.evaluation_steps,
                 warmup_steps=warmup_steps,
                 optimizer_params=optimizer_params,
                 output_path=model_save_path)
@@ -277,17 +263,12 @@ if __name__ == '__main__':
     stsb_samples = []
 
     if args.using_stsb_dev_exp:
-        test_dataset = DatasetEntryWithExplanation.read_list('stsb_test_with_explanation.jsonl')
+        test_dataset = DatasetEntryWithExp.read_list('stsb_test_with_explanation.jsonl')
         stsb_samples = [InputExample(texts=[x.text_a, x.text_b + model.tokenizer.sep_token*2 + x.explanation], label=float(x.label)) for x in test_dataset]
     else:
-        with gzip.open(args.sts_dataset_path, 'rt', encoding='utf8') as fIn:
-            reader = csv.DictReader(fIn, delimiter='\t', quoting=csv.QUOTE_NONE)
-            for row in reader:
-                score = float(row['score']) / 5.0  # Normalize score to range 0 ... 1.
-                inp_example = InputExample(texts=[row['sentence1'], row['sentence2']], label=score)
-
-                if row['split'] == 'test':
-                    stsb_samples.append(inp_example)
+        stsb = STSBenchmarkEval(PATH_TO_DATA + '/downstream/STS/STSBenchmark')
+        test_data = list(zip(stsb.data['test'][0], stsb.data['test'][1], stsb.data['test'][2]))
+        stsb_samples = [InputExample(texts=[' '.join(x[0]), ' '.join(x[1])], label=float(x[2])/5.0) for x in dev_data]
 
     if args.encoder_type == 'bi':
         stsb_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(stsb_samples, name='stsb-test')

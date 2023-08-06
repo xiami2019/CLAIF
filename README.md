@@ -36,21 +36,35 @@ python postprocess_dataset.py --input_file ./sentence_pairs_with_labels/generate
 After post processing, you will get the final data 'demo_sentence_pairs_post.jsonl', which can be used for sentence embeddings learning.
 
 ### Generated Data
-Here wo provide our generated data, which are used in our experiments.  
-**CLAIF**: https://drive.google.com/file/d/1sHPGlrSVvTjVEDE8QXEeX8ECfMGLzMs0/view?usp=drive_link  
-**CLAIF_scaled**: https://drive.google.com/file/d/1Qzwc4AudWC7hM4vncgbbEUn77r66_pZ-/view?usp=drive_link  
-**NLI_data_with_similarity_scores**: https://drive.google.com/file/d/1h_H_k-GjkFKg2v843de1MqgG-g_BlYhq/view?usp=drive_link  
+Here wo provide our generated data, which are used in our experiments: https://huggingface.co/datasets/fnlp/CLAIF-data  
+**CLAIF**: claif_data.jsonl  
+**CLAIF_scaled**: claif_scaled_data.jsonl  
+**NLI_data_with_similarity_scores**: nli_data_with_similarity_scores.csv  
 
 ## Model Training
 
-### STS Data Preparation
+### Download Generated Data
+```
+cd generated_data
+bash download_claif_data.sh
+```
+
+### Prepare STS Data
 ```
 cd SentEval/data/downstream/
 bash download_dataset.sh
 ```
 
 ### CLAIF
-
+```python
+python run_training.py \
+--input_file ./generated_data/claif_data.jsonl \
+--output_dir result_model \
+--model_name roberta-base \
+--num_epochs 1 \
+--lr 2e-5 \
+--using_stsb_dev
+```
 ### CLHAIF
 
 ## Evaluation
