@@ -111,7 +111,7 @@ class DatasetEntryWithExp:
         self.explanation = explanation
 
     def __repr__(self):
-        return f'DatasetEntry(text_a="{self.text_a}", text_b="{self.text_b}", label={self.label}, explanation={self.explanation})'
+        return f'DatasetEntryWithExplanation(text_a="{self.text_a}", text_b="{self.text_b}", label={self.label}, explanation={self.explanation})'
 
     def __key(self):
         return self.text_a, self.text_b, self.label, self.explanation
@@ -135,5 +135,5 @@ class DatasetEntryWithExp:
         pairs = []
         with open(path, 'r', encoding='utf8') as fh:
             for line in fh:
-                pairs.append(DatasetEntry(**json.loads(line)))
+                pairs.append(DatasetEntryWithExp(**json.loads(line)))
         return pairs
