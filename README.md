@@ -61,7 +61,7 @@ python run_training.py \
 --input_file ./generated_data/claif_data.jsonl \
 --output_dir result_model \
 --model_name roberta-base \
---num_epochs 1 \
+--num_epochs 3 \
 --lr 2e-5 \
 --using_stsb_dev
 ```
