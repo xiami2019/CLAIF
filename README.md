@@ -4,6 +4,11 @@ This repository contains the code, data and model checkpoints for our paper [Imp
 Feedback](https://arxiv.org/abs/2305.01918) (CLAIF).
 
 ## Preparing the Environment
+```
+conda create -n claif python=3.8
+conda activate claif
+pip install -r requirements.txt
+```
 
 ## Data Generation
 You can choose your own data as original sentences to construct datasets for sentence embeddings learning. Here we use a small set of sentences as an example to show the whole data generation process.  
@@ -35,3 +40,17 @@ Here wo provide our generated data, which are used in our experiments.
 **CLAIF**: https://drive.google.com/file/d/1sHPGlrSVvTjVEDE8QXEeX8ECfMGLzMs0/view?usp=drive_link  
 **CLAIF_scaled**: https://drive.google.com/file/d/1Qzwc4AudWC7hM4vncgbbEUn77r66_pZ-/view?usp=drive_link  
 **NLI_data_with_similarity_scores**: https://drive.google.com/file/d/1h_H_k-GjkFKg2v843de1MqgG-g_BlYhq/view?usp=drive_link  
+
+## Model Training
+
+### STS Data Preparation
+```
+cd SentEval/data/downstream/
+bash download_dataset.sh
+```
+
+### CLAIF
+
+### CLHAIF
+
+## Evaluation
