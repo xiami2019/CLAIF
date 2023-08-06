@@ -66,5 +66,7 @@ python run_training.py \
 --using_stsb_dev
 ```
 ### CLHAIF
+Coming soon.
 
 ## Evaluation
+Coming soon.
