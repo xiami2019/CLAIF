@@ -32,6 +32,6 @@ After post processing, you will get the final data 'demo_sentence_pairs_post.jso
 
 ### Generated Data
 Here wo provide our generated data, which are used in our experiments.  
-**CLAIF**: https://drive.google.com/file/d/1sHPGlrSVvTjVEDE8QXEeX8ECfMGLzMs0/view?usp=drive_link
-**CLAIF_scaled**: https://drive.google.com/file/d/1Qzwc4AudWC7hM4vncgbbEUn77r66_pZ-/view?usp=drive_link
-**NLI_data_with_similarity_scores**: https://drive.google.com/file/d/1h_H_k-GjkFKg2v843de1MqgG-g_BlYhq/view?usp=drive_link
+**CLAIF**: https://drive.google.com/file/d/1sHPGlrSVvTjVEDE8QXEeX8ECfMGLzMs0/view?usp=drive_link  
+**CLAIF_scaled**: https://drive.google.com/file/d/1Qzwc4AudWC7hM4vncgbbEUn77r66_pZ-/view?usp=drive_link  
+**NLI_data_with_similarity_scores**: https://drive.google.com/file/d/1h_H_k-GjkFKg2v843de1MqgG-g_BlYhq/view?usp=drive_link  
