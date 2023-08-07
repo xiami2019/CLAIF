@@ -1,7 +1,8 @@
 # Improving Contrastive Learning of Sentence Embeddings from AI Feedback
 
 This repository contains the code, data and model checkpoints for our paper [Improving Contrastive Learning of Sentence Embeddings from AI
-Feedback](https://arxiv.org/abs/2305.01918) (CLAIF).
+Feedback](https://arxiv.org/abs/2305.01918) (CLAIF).  
+Accepted to Findings of ACL 2023.
 
 ## Preparing the Environment
 ```
