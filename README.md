@@ -92,6 +92,8 @@ Our released models are listed as following. You can import these models by usin
 | [fnlp/claif-roberta-base](https://huggingface.co/fnlp/claif-roberta-base) |   79.90  |
 |    [fnlp/claif-scaled-bert-base](https://huggingface.co/fnlp/claif-scaled-bert-base)    |   82.37  |
 |    [fnlp/claif-scaled-roberta-base](https://huggingface.co/fnlp/claif-scaled-roberta-base)   |   81.88  |
+|    [fnlp/clhaif-simcse-bert-base](https://huggingface.co/fnlp/clhaif-simcse-bert-base)    |   82.08  |
+|    [fnlp/clhaif-simcse-roberta-base](https://huggingface.co/fnlp/clhaif-simcse-roberta-base)   |   81.88  |
 
 #### Use CLAIF with Sentence-Transformers
 ```python
@@ -155,7 +157,7 @@ which is expected to output the results in a tubular format:
 +-------+-------+-------+-------+-------+--------------+-----------------+-------+
 ```
 ### Evaluation of CLHAIF
-You can run the evaluation script for clhaif like:
+You can run the evaluation script for clhaif-bert-base like:
 ```python
 python evaluation_clhaif.py \
 --model_name_or_path fnlp/clhaif-simcse-bert-base \
@@ -170,6 +172,23 @@ which is expected to output the results in a tubular format:
 | STS12 | STS13 | STS14 | STS15 | STS16 | STSBenchmark | SICKRelatedness |  Avg. |
 +-------+-------+-------+-------+-------+--------------+-----------------+-------+
 | 74.86 | 85.09 | 81.24 | 85.96 | 81.33 |    84.69     |      81.36      | 82.08 |
++-------+-------+-------+-------+-------+--------------+-----------------+-------+
+```
+You can run the evaluation script for clhaif-roberta-base like:
+```python
+python evaluation_clhaif.py \
+--model_name_or_path fnlp/clhaif-simcse-roberta-base \
+--pooler avg \
+--task_set sts \
+--mode test
+```
+which is expected to output the results in a tubular format:
+```
+------ test ------
++-------+-------+-------+-------+-------+--------------+-----------------+-------+
+| STS12 | STS13 | STS14 | STS15 | STS16 | STSBenchmark | SICKRelatedness |  Avg. |
++-------+-------+-------+-------+-------+--------------+-----------------+-------+
+| 76.23 | 85.46 | 81.48 | 86.47 | 83.40 |    85.93     |      80.95      | 82.85 |
 +-------+-------+-------+-------+-------+--------------+-----------------+-------+
 ```
 ## Citation
