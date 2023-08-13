@@ -25,14 +25,20 @@ After step1, you will get sentence pairs in 'sentence_pairs/generated-dataset.js
 ### Step 2: Semantic Similarity Labeling
 We use **text-davinci-003** as default.
 ```python
-python data_generation.py --generation_stage stage-2 --output_dir sentence_pairs_with_labels --input_file ./sentence_pairs/generated-dataset.jsonl --input_file_type jsonl --batch_size 5 --openai_api_key <your_openai_api_key>
+python data_generation.py --generation_stage stage-2\
+--output_dir sentence_pairs_with_labels\
+--input_file ./sentence_pairs/generated-dataset.jsonl\
+--input_file_type jsonl\
+--batch_size 5\
+--openai_api_key <your_openai_api_key>
 ```
 After step2, you will get sentence pairs with similarity scores and explainations from AI feedback in 'sentence_pairs_with_labels/generated-dataset.jsonl' with a jsonl format.
 
 ### Post Processing
 We refer to the post-processing pipeline in dino: https://github.com/timoschick/dino/blob/main/scripts/sts/postprocess_dataset.py
 ```
-python postprocess_dataset.py --input_file ./sentence_pairs_with_labels/generated-dataset.jsonl --output_file demo_sentence_pairs_post.jsonl
+python postprocess_dataset.py --input_file ./sentence_pairs_with_labels/generated-dataset.jsonl\
+--output_file demo_sentence_pairs_post.jsonl
 ```
 After post processing, you will get the final data 'demo_sentence_pairs_post.jsonl', which can be used for sentence embeddings learning.
 
@@ -67,7 +73,15 @@ python run_training.py \
 --using_stsb_dev
 ```
 ### CLHAIF
-Coming soon.
+For the training of CLHAIF, you should use **the same environment** as the [SimCSE](https://github.com/princeton-nlp/SimCSE), since the version variants of transformers and pytorch may cause some bugs.
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_clhaif_simcse.sh
+```
+Before evaluation the saved checkpoint, you need to convert it to the huggingface format (the same step as SimCSE):
+```
+python simcse_to_huggingface.py --path {PATH_TO_CHECKPOINT_FOLDER}
+```
+After that, you can evaluate it by our evaluation code.
 
 ## Inference 
 ### Model List
@@ -127,7 +141,9 @@ print(sentence_embeddings)
 ### Evaluation of CLAIF
 You can run the evaluation script for claif like:
 ```python
-python evaluation_sts.py --model_name_or_path 'fnlp/claif-roberta-base' --mode test --task_set sts
+python evaluation_sts.py --model_name_or_path 'fnlp/claif-roberta-base'\
+--mode test\
+--task_set sts
 ```
 which is expected to output the results in a tubular format:
 ```
@@ -136,6 +152,24 @@ which is expected to output the results in a tubular format:
 | STS12 | STS13 | STS14 | STS15 | STS16 | STSBenchmark | SICKRelatedness |  Avg. |
 +-------+-------+-------+-------+-------+--------------+-----------------+-------+
 | 68.33 | 82.26 | 77.00 | 85.18 | 83.43 |    85.05     |      78.02      | 79.90 |
++-------+-------+-------+-------+-------+--------------+-----------------+-------+
+```
+### Evaluation of CLHAIF
+You can run the evaluation script for clhaif like:
+```python
+python evaluation_clhaif.py \
+--model_name_or_path fnlp/clhaif-simcse-bert-base \
+--pooler cls \
+--task_set sts \
+--mode test
+```
+which is expected to output the results in a tubular format:
+```
+------ test ------
++-------+-------+-------+-------+-------+--------------+-----------------+-------+
+| STS12 | STS13 | STS14 | STS15 | STS16 | STSBenchmark | SICKRelatedness |  Avg. |
++-------+-------+-------+-------+-------+--------------+-----------------+-------+
+| 74.86 | 85.09 | 81.24 | 85.96 | 81.33 |    84.69     |      81.36      | 82.08 |
 +-------+-------+-------+-------+-------+--------------+-----------------+-------+
 ```
 ## Citation
