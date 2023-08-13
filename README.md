@@ -138,3 +138,19 @@ which is expected to output the results in a tubular format:
 | 68.33 | 82.26 | 77.00 | 85.18 | 83.43 |    85.05     |      78.02      | 79.90 |
 +-------+-------+-------+-------+-------+--------------+-----------------+-------+
 ```
+## Citation
+```bibtex
+@inproceedings{DBLP:conf/acl/ChengYSLQ23,
+  author       = {Qinyuan Cheng and
+                  Xiaogui Yang and
+                  Tianxiang Sun and
+                  Linyang Li and
+                  Xipeng Qiu},
+  title        = {Improving Contrastive Learning of Sentence Embeddings from {AI} Feedback},
+  booktitle    = {Findings of the Association for Computational Linguistics: {ACL} 2023,
+                  Toronto, Canada, July 9-14, 2023},
+  pages        = {11122--11138},
+  publisher    = {Association for Computational Linguistics},
+  year         = {2023},
+}
+```
