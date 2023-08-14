@@ -93,7 +93,7 @@ Our released models are listed as following. You can import these models by usin
 |    [fnlp/claif-scaled-bert-base](https://huggingface.co/fnlp/claif-scaled-bert-base)    |   82.37  |
 |    [fnlp/claif-scaled-roberta-base](https://huggingface.co/fnlp/claif-scaled-roberta-base)   |   81.88  |
 |    [fnlp/clhaif-simcse-bert-base](https://huggingface.co/fnlp/clhaif-simcse-bert-base)    |   82.08  |
-|    [fnlp/clhaif-simcse-roberta-base](https://huggingface.co/fnlp/clhaif-simcse-roberta-base)   |   81.88  |
+|    [fnlp/clhaif-simcse-roberta-base](https://huggingface.co/fnlp/clhaif-simcse-roberta-base)   |   82.85  |
 
 #### Use CLAIF with Sentence-Transformers
 ```python
@@ -192,6 +192,7 @@ which is expected to output the results in a tubular format:
 +-------+-------+-------+-------+-------+--------------+-----------------+-------+
 ```
 ## Citation
+Our implementation is built on the source code from [dino](https://github.com/timoschick/dino/tree/main) and [SimCSE](https://github.com/princeton-nlp/SimCSE). Thanks for their work.
 ```bibtex
 @inproceedings{DBLP:conf/acl/ChengYSLQ23,
   author       = {Qinyuan Cheng and
